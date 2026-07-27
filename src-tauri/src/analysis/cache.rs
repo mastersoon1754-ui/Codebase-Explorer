@@ -6,6 +6,7 @@ use std::{
 
 use super::types::FileAnalysis;
 use crate::project::types::ProjectEntry;
+use crate::search::types::ProjectIndex;
 
 #[derive(Clone)]
 pub struct ProjectRecord {
@@ -17,6 +18,7 @@ pub struct ProjectRecord {
 pub struct AnalysisState {
     projects: Mutex<HashMap<String, ProjectRecord>>,
     files: Mutex<HashMap<(String, String), FileAnalysis>>,
+    search_indexes: Mutex<HashMap<String, ProjectIndex>>,
 }
 
 impl AnalysisState {
@@ -45,5 +47,20 @@ impl AnalysisState {
 
     pub fn files(&self) -> MutexGuard<'_, HashMap<(String, String), FileAnalysis>> {
         self.files.lock().expect("analysis cache lock poisoned")
+    }
+
+    pub fn search_index(&self, scan_id: &str) -> Option<ProjectIndex> {
+        self.search_indexes
+            .lock()
+            .expect("search index lock poisoned")
+            .get(scan_id)
+            .cloned()
+    }
+
+    pub fn store_search_index(&self, scan_id: String, index: ProjectIndex) {
+        self.search_indexes
+            .lock()
+            .expect("search index lock poisoned")
+            .insert(scan_id, index);
     }
 }

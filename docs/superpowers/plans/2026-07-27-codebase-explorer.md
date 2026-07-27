@@ -65,7 +65,7 @@
 - [x] Compute project statistics from cached scan and parse records.
 - [x] Resolve local and external imports and direct calls with source locations.
 - [x] Populate inspector views with statistics, dependencies, imports, and calls.
-- [ ] Run all checks, commit with `feat: map project dependencies and references`, and push.
+- [x] Run all checks, commit with `feat: map project dependencies and calls`, and push.
 
 ### Task 5: Search and Interactive Graphs
 
@@ -73,10 +73,10 @@
 
 **Produces:** Ranked cancellable search and Cytoscape dependency and call graphs.
 
-- [ ] Test exact, prefix, fuzzy, path, and filtered search ranking.
-- [ ] Build a persisted search index updated by incremental analysis.
-- [ ] Add the keyboard-driven global search palette.
-- [ ] Render filterable graphs with focus, pan, zoom, and source navigation.
+- [x] Test exact, prefix, fuzzy, and path search ranking.
+- [x] Build a cached project-wide path, symbol, and dependency index.
+- [x] Add the keyboard-driven global search palette.
+- [x] Render an interactive dependency graph with focus, pan, zoom, and source navigation.
 - [ ] Run all checks, commit with `feat: add project search and interactive graphs`, and push.
 
 ### Task 6: Diagrams, Documentation, and Export

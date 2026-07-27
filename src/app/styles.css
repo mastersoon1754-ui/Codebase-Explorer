@@ -828,6 +828,197 @@ kbd {
   white-space: nowrap;
 }
 
+.palette-backdrop {
+  position: fixed;
+  z-index: 50;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 10vh 18px 18px;
+  background: rgb(0 0 0 / 42%);
+  backdrop-filter: blur(3px);
+}
+
+.search-palette {
+  width: min(640px, 100%);
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: 9px;
+  background: var(--surface-raised);
+  box-shadow: 0 24px 80px rgb(0 0 0 / 38%);
+}
+
+.search-palette__input {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  height: 48px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.search-palette__input input {
+  width: 100%;
+  color: var(--text);
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 13px;
+}
+
+.search-palette__input button {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  color: var(--text-faint);
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+}
+
+.search-results {
+  max-height: min(52vh, 440px);
+  min-height: 90px;
+  overflow: auto;
+  padding: 6px;
+}
+
+.search-results > p {
+  margin: 0;
+  padding: 28px 18px;
+  color: var(--text-faint);
+  font-size: 11px;
+  text-align: center;
+}
+
+.search-results > button {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  width: 100%;
+  min-height: 46px;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 9px;
+  color: var(--text-muted);
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  text-align: left;
+}
+
+.search-results > button[data-active] {
+  color: var(--text);
+  background: var(--accent-soft);
+}
+
+.search-results > button > svg {
+  color: var(--accent-strong);
+}
+
+.search-results > button span {
+  display: grid;
+  min-width: 0;
+}
+
+.search-results strong,
+.search-results small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-results strong {
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.search-results small {
+  margin-top: 3px;
+  color: var(--text-faint);
+  font-size: 9px;
+}
+
+.search-results code {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 8px;
+}
+
+.search-palette__footer {
+  display: flex;
+  gap: 14px;
+  padding: 7px 12px;
+  color: var(--text-faint);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 8px;
+}
+
+.dependency-graph {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+}
+
+.dependency-graph > header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 26px 30px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.dependency-graph h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 640;
+  letter-spacing: -0.035em;
+}
+
+.graph-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.graph-controls button {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  place-items: center;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface-raised);
+}
+
+.graph-canvas {
+  min-height: 0;
+  background:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px), var(--bg);
+  background-size: 28px 28px;
+  background-position: -1px -1px;
+}
+
+.graph-empty {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  color: var(--text-faint);
+  font-size: 11px;
+}
+
+.graph-empty svg {
+  color: var(--accent-strong);
+}
+
 .eyebrow {
   margin-bottom: 16px;
   color: var(--accent-strong);

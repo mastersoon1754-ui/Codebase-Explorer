@@ -1,7 +1,13 @@
 import { Command, Download, Search, SlidersHorizontal } from "lucide-react";
 import { ThemeToggle } from "../theme/ThemeToggle";
 
-export function TopBar() {
+export function TopBar({
+  canSearch,
+  onSearch,
+}: {
+  canSearch: boolean;
+  onSearch: () => void;
+}) {
   return (
     <header className="top-bar">
       <div className="brand">
@@ -10,7 +16,12 @@ export function TopBar() {
         </div>
         <span>Codebase Explorer</span>
       </div>
-      <button className="search-trigger" disabled type="button">
+      <button
+        className="search-trigger"
+        disabled={!canSearch}
+        onClick={onSearch}
+        type="button"
+      >
         <Search aria-hidden="true" size={15} />
         <span>Search files and symbols</span>
         <kbd>Ctrl K</kbd>

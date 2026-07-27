@@ -5,10 +5,12 @@ use analysis::{
     commands::{analyze_file, get_project_statistics},
 };
 use project::commands::{ScanRegistry, cancel_scan, open_project};
+use search::commands::{get_dependency_graph, search_project};
 
 mod analysis;
 mod languages;
 mod project;
+mod search;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -37,7 +39,9 @@ pub fn run() {
             open_project,
             cancel_scan,
             analyze_file,
-            get_project_statistics
+            get_project_statistics,
+            search_project,
+            get_dependency_graph
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

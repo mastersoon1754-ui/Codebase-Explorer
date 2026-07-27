@@ -10,22 +10,28 @@ import {
 type RailItem = {
   label: string;
   icon: LucideIcon;
-  active?: boolean;
+  id: "explorer" | "search" | "graph" | "symbols" | "settings";
 };
 
 const primaryItems: RailItem[] = [
-  { label: "Explorer", icon: Files, active: true },
-  { label: "Search", icon: Search },
-  { label: "Dependencies", icon: GitFork },
-  { label: "Symbols", icon: Boxes },
+  { id: "explorer", label: "Explorer", icon: Files },
+  { id: "search", label: "Search", icon: Search },
+  { id: "graph", label: "Dependencies", icon: GitFork },
+  { id: "symbols", label: "Symbols", icon: Boxes },
 ];
 
-function RailButton({ label, icon: Icon, active }: RailItem) {
+function RailButton({
+  label,
+  icon: Icon,
+  active,
+  onClick,
+}: RailItem & { active?: boolean; onClick?: () => void }) {
   return (
     <button
       aria-label={label}
       className="rail-button"
       data-active={active || undefined}
+      onClick={onClick}
       type="button"
     >
       <Icon aria-hidden="true" size={20} strokeWidth={1.7} />
@@ -33,15 +39,34 @@ function RailButton({ label, icon: Icon, active }: RailItem) {
   );
 }
 
-export function ActivityRail() {
+export function ActivityRail({
+  activeView,
+  onNavigate,
+}: {
+  activeView: "explorer" | "graph";
+  onNavigate: (view: "explorer" | "search" | "graph") => void;
+}) {
   return (
     <nav aria-label="Workspace views" className="activity-rail">
       <div className="activity-rail__main">
         {primaryItems.map((item) => (
-          <RailButton key={item.label} {...item} />
+          <RailButton
+            active={item.id === activeView}
+            key={item.label}
+            onClick={() => {
+              if (
+                item.id === "explorer" ||
+                item.id === "search" ||
+                item.id === "graph"
+              ) {
+                onNavigate(item.id);
+              }
+            }}
+            {...item}
+          />
         ))}
       </div>
-      <RailButton label="Settings" icon={Settings} />
+      <RailButton id="settings" label="Settings" icon={Settings} />
     </nav>
   );
 }
