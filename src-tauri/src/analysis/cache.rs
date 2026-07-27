@@ -23,10 +23,20 @@ pub struct AnalysisState {
 
 impl AnalysisState {
     pub fn register_project(&self, scan_id: String, root: PathBuf, entries: Vec<ProjectEntry>) {
-        self.projects
+        let mut projects = self
+            .projects
             .lock()
-            .expect("project registry lock poisoned")
-            .insert(scan_id, ProjectRecord { root, entries });
+            .expect("project registry lock poisoned");
+        projects.clear();
+        projects.insert(scan_id, ProjectRecord { root, entries });
+        self.files
+            .lock()
+            .expect("analysis cache lock poisoned")
+            .clear();
+        self.search_indexes
+            .lock()
+            .expect("search index lock poisoned")
+            .clear();
     }
 
     pub fn project_root(&self, scan_id: &str) -> Option<PathBuf> {
@@ -62,5 +72,24 @@ impl AnalysisState {
             .lock()
             .expect("search index lock poisoned")
             .insert(scan_id, index);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::search::types::ProjectIndex;
+
+    #[test]
+    fn opening_another_project_releases_previous_session_data() {
+        let state = AnalysisState::default();
+        state.register_project("first".into(), PathBuf::from("first"), Vec::new());
+        state.store_search_index("first".into(), ProjectIndex::default());
+
+        state.register_project("second".into(), PathBuf::from("second"), Vec::new());
+
+        assert!(state.project("first").is_none());
+        assert!(state.search_index("first").is_none());
+        assert!(state.project("second").is_some());
     }
 }

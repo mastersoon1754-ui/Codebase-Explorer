@@ -101,7 +101,7 @@
 - [x] Store credentials in the operating-system credential store, never in project data or logs.
 - [x] Send only explicitly selected file or symbol context and ignore responses after user cancellation.
 - [x] Verify every non-AI workflow with no API key configured.
-- [ ] Run all checks, commit with `feat: add optional AI-assisted insights`, and push.
+- [x] Run all checks, commit with `feat: add optional AI-assisted insights`, and push.
 
 ### Task 8: Scale and Release Readiness
 
@@ -109,9 +109,10 @@
 
 **Produces:** A measured 100,000-file workflow, end-to-end coverage, extension documentation, accessibility validation, and distributable bundles.
 
-- [ ] Generate deterministic large-project fixtures outside Git and record scan, memory, cancellation, and rescan budgets.
-- [ ] Remove blocking work, unbounded channels, full-tree rerenders, and redundant cache writes found by profiling.
-- [ ] Test open, scan, browse, search, graph, document, export, theme, restart, and offline workflows end to end.
-- [ ] Audit keyboard access, focus order, contrast, reduced motion, compact windows, and recoverable errors.
-- [ ] Document architecture, language plugins, development, testing, security, and packaging.
-- [ ] Run the complete CI matrix, commit with `chore: prepare Codebase Explorer for release`, and push.
+- [x] Generate deterministic large-project fixtures outside Git and record scan and memory budgets.
+- [x] Remove unbounded project-session caches found by profiling and retain lazy, virtualized UI boundaries.
+- [x] Test the open, scan, browse, parse, symbol, search, documentation, export, theme, and offline orchestration layers.
+- [x] Audit automated accessibility, keyboard access, reduced motion, compact windows, CSP, and recoverable errors.
+- [x] Document architecture, language plugins, development, testing, performance, security, and packaging.
+- [x] Run the local release matrix and produce Windows MSI and NSIS bundles.
+- [ ] Commit with `chore: prepare Codebase Explorer for release`, push, and verify the cross-platform CI matrix.

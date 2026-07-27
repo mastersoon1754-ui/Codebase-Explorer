@@ -251,8 +251,14 @@ fn is_known_binary(path: &Path) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use std::{fs, sync::atomic::AtomicBool};
+    use std::{
+        fs,
+        io::{BufWriter, Write},
+        sync::atomic::AtomicBool,
+        time::{Duration, Instant},
+    };
 
+    use sysinfo::{Pid, ProcessesToUpdate, System};
     use tempfile::tempdir;
 
     use super::*;
@@ -390,5 +396,62 @@ mod tests {
         let result = scan_project(&file, "scan-5".into(), &AtomicBool::new(false), |_, _| {});
 
         assert_eq!(result.unwrap_err().code, "invalidRoot");
+    }
+
+    #[test]
+    #[ignore = "creates 100,000 files; run explicitly for release profiling"]
+    fn scans_one_hundred_thousand_files_within_release_budget() {
+        const DIRECTORY_COUNT: usize = 100;
+        const FILES_PER_DIRECTORY: usize = 1_000;
+        const TIME_BUDGET: Duration = Duration::from_secs(5);
+        const MEMORY_BUDGET_BYTES: u64 = 128 * 1024 * 1024;
+
+        let fixture = tempdir().unwrap();
+        for directory_index in 0..DIRECTORY_COUNT {
+            let directory = fixture.path().join(format!("module-{directory_index:03}"));
+            fs::create_dir(&directory).unwrap();
+            for file_index in 0..FILES_PER_DIRECTORY {
+                let file =
+                    fs::File::create(directory.join(format!("file-{file_index:04}.ts"))).unwrap();
+                let mut writer = BufWriter::new(file);
+                writeln!(writer, "export const value_{file_index} = {file_index};").unwrap();
+            }
+        }
+
+        let process_id = Pid::from_u32(std::process::id());
+        let mut system = System::new();
+        system.refresh_processes(ProcessesToUpdate::Some(&[process_id]), true);
+        let memory_before = system
+            .process(process_id)
+            .map_or(0, |process| process.memory());
+        let started = Instant::now();
+
+        let snapshot = scan_project(
+            fixture.path(),
+            "large-scan".into(),
+            &AtomicBool::new(false),
+            |_, _| {},
+        )
+        .unwrap();
+        let elapsed = started.elapsed();
+        system.refresh_processes(ProcessesToUpdate::Some(&[process_id]), true);
+        let memory_after = system
+            .process(process_id)
+            .map_or(0, |process| process.memory());
+        let memory_growth = memory_after.saturating_sub(memory_before);
+
+        eprintln!(
+            "100k scan: {:.2?}, RSS growth: {:.1} MB, entries: {}",
+            elapsed,
+            memory_growth as f64 / 1024.0 / 1024.0,
+            snapshot.entries.len()
+        );
+        assert_eq!(snapshot.file_count, 100_000);
+        assert!(elapsed <= TIME_BUDGET, "scan took {elapsed:.2?}");
+        assert!(
+            memory_growth <= MEMORY_BUDGET_BYTES,
+            "scan used {:.1} MB",
+            memory_growth as f64 / 1024.0 / 1024.0
+        );
     }
 }

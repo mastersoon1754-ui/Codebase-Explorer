@@ -19,7 +19,7 @@ An optional OpenAI-compatible provider can explain selected files and symbols or
 Requirements:
 
 - Node.js 20 or newer
-- Rust 1.85 or newer
+- Rust 1.88 or newer
 - The platform prerequisites listed in the [Tauri documentation](https://v2.tauri.app/start/prerequisites/)
 
 Install dependencies and start the desktop application:
@@ -32,11 +32,20 @@ npm run tauri dev
 Run the quality checks:
 
 ```sh
-npm test -- --run
-npm run lint
-npm run build
-cargo test --manifest-path src-tauri/Cargo.toml
+npm run quality
+cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
+cargo clippy --locked --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
+cargo test --locked --manifest-path src-tauri/Cargo.toml
 ```
+
+## Documentation
+
+- [Architecture](docs/architecture.md)
+- [Language plugins](docs/language-plugins.md)
+- [Performance](docs/performance.md)
+- [Contributing](docs/contributing.md)
+- [Security policy](docs/security.md)
+- [Release process](docs/releasing.md)
 
 ## Roadmap
 

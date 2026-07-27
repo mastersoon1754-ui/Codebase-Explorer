@@ -25,3 +25,7 @@ dist-ssr
 
 # Local analysis data
 .codebase-explorer/
+
+# Release and benchmark output
+src-tauri/target/
+tests/fixtures/generated/
