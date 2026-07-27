@@ -3,6 +3,8 @@ import { cancelProjectScan, chooseProjectFolder, scanProject } from "./api";
 import { analyzeSourceFile } from "../symbols/api";
 import type { FileAnalysis, SymbolInfo } from "../symbols/types";
 import type { ProjectSnapshot, ScanError, ScanProgress } from "./types";
+import { loadProjectStatistics } from "../statistics/api";
+import type { ProjectStatistics } from "../statistics/types";
 
 type ProjectState = {
   project: ProjectSnapshot | null;
@@ -12,6 +14,7 @@ type ProjectState = {
   selectedFile: FileAnalysis | null;
   isAnalyzing: boolean;
   selectedSymbol: SymbolInfo | null;
+  statistics: ProjectStatistics | null;
   openProject: () => Promise<void>;
   cancelScan: () => Promise<void>;
   updateProgress: (progress: ScanProgress) => void;
@@ -38,6 +41,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   selectedFile: null,
   isAnalyzing: false,
   selectedSymbol: null,
+  statistics: null,
 
   async openProject() {
     const path = await chooseProjectFolder();
@@ -56,9 +60,18 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         project,
         selectedFile: null,
         selectedSymbol: null,
+        statistics: null,
         isScanning: false,
         progress: null,
       });
+      try {
+        const statistics = await loadProjectStatistics(project.scanId);
+        if (get().project?.scanId === project.scanId) set({ statistics });
+      } catch (error) {
+        if (get().project?.scanId === project.scanId) {
+          set({ error: errorMessage(error) });
+        }
+      }
     } catch (error) {
       const cancelled =
         typeof error === "object" &&

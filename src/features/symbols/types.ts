@@ -28,6 +28,21 @@ export type FileAnalysis = {
   contentHash: string;
   source: string;
   symbols: SymbolInfo[];
+  imports: ImportRelation[];
+  calls: CallRelation[];
   parseErrors: number;
   cached: boolean;
+};
+
+export type ImportRelation = {
+  module: string;
+  kind: "local" | "external";
+  resolvedPath: string | null;
+  range: SourceRange;
+};
+
+export type CallRelation = {
+  target: string;
+  caller: string | null;
+  range: SourceRange;
 };

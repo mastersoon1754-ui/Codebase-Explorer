@@ -4,7 +4,10 @@ use tree_sitter::{Node, Parser, Point};
 
 use crate::languages::parser_for_path;
 
-use super::types::{AnalysisError, FileAnalysis, SourcePosition, SourceRange, Symbol, SymbolKind};
+use super::types::{
+    AnalysisError, CallRelation, FileAnalysis, ImportKind, ImportRelation, SourcePosition,
+    SourceRange, Symbol, SymbolKind,
+};
 
 pub fn parse_file(
     path: &Path,
@@ -33,6 +36,7 @@ pub fn parse_file(
     let parse_errors = count_errors(tree.root_node());
     let content_hash = blake3::hash(source.as_bytes()).to_hex().to_string();
     let symbols = collector.symbols;
+    let (imports, calls) = collect_relationships(tree.root_node(), &source, language_parser.id());
 
     Ok(FileAnalysis {
         path: relative_path.to_owned(),
@@ -40,9 +44,107 @@ pub fn parse_file(
         content_hash,
         source,
         symbols,
+        imports,
+        calls,
         parse_errors,
         cached: false,
     })
+}
+
+fn collect_relationships(
+    root: Node<'_>,
+    source: &str,
+    language: &str,
+) -> (Vec<ImportRelation>, Vec<CallRelation>) {
+    let mut imports = Vec::new();
+    let mut calls = Vec::new();
+    collect_relationship_nodes(root, source, language, &mut imports, &mut calls);
+    (imports, calls)
+}
+
+fn collect_relationship_nodes(
+    node: Node<'_>,
+    source: &str,
+    language: &str,
+    imports: &mut Vec<ImportRelation>,
+    calls: &mut Vec<CallRelation>,
+) {
+    if matches!(node.kind(), "import_statement" | "import_from_statement") {
+        if let Some(module) = import_module(node, source, language) {
+            imports.push(ImportRelation {
+                kind: if module.starts_with('.') {
+                    ImportKind::Local
+                } else {
+                    ImportKind::External
+                },
+                module,
+                resolved_path: None,
+                range: range(node),
+            });
+        }
+    } else if matches!(node.kind(), "call" | "call_expression")
+        && let Some(function) = node.child_by_field_name("function")
+        && let Some(target) = source.get(function.byte_range()).map(str::trim)
+        && !target.is_empty()
+    {
+        calls.push(CallRelation {
+            target: target.to_owned(),
+            caller: enclosing_callable(node, source),
+            range: range(node),
+        });
+    }
+
+    let mut cursor = node.walk();
+    for child in node.named_children(&mut cursor) {
+        collect_relationship_nodes(child, source, language, imports, calls);
+    }
+}
+
+fn import_module(node: Node<'_>, source: &str, language: &str) -> Option<String> {
+    if language == "python" {
+        let text = source.get(node.byte_range())?.trim();
+        let module = text
+            .strip_prefix("from ")
+            .and_then(|value| value.split_once(" import ").map(|part| part.0))
+            .or_else(|| {
+                text.strip_prefix("import ")
+                    .and_then(|value| value.split([',', ' ']).next())
+            })?;
+        return Some(module.trim().to_owned());
+    }
+    let source_node = node.child_by_field_name("source")?;
+    Some(
+        source
+            .get(source_node.byte_range())?
+            .trim_matches(['\'', '"'])
+            .to_owned(),
+    )
+}
+
+fn enclosing_callable(node: Node<'_>, source: &str) -> Option<String> {
+    let mut current = node.parent();
+    while let Some(parent) = current {
+        if matches!(
+            parent.kind(),
+            "function_definition"
+                | "function_declaration"
+                | "generator_function_declaration"
+                | "method_definition"
+                | "arrow_function"
+        ) {
+            if let Some(name) = parent.child_by_field_name("name") {
+                return source.get(name.byte_range()).map(str::to_owned);
+            }
+            if parent.kind() == "arrow_function"
+                && let Some(declarator) = parent.parent()
+                && let Some(name) = declarator.child_by_field_name("name")
+            {
+                return source.get(name.byte_range()).map(str::to_owned);
+            }
+        }
+        current = parent.parent();
+    }
+    None
 }
 
 pub struct SymbolCollector<'a> {
@@ -323,5 +425,45 @@ mod tests {
                 .any(|symbol| symbol.name == "CardProps")
         );
         assert!(analysis.symbols.iter().any(|symbol| symbol.name == "Card"));
+    }
+
+    #[test]
+    fn extracts_python_imports_and_calls_with_callers() {
+        let analysis = parse(
+            "app/service.py",
+            "from .models import User\nimport requests\n\ndef load():\n    response = requests.get('/users')\n    return User(response.json())\n",
+        );
+
+        assert!(analysis.imports.iter().any(|item| item.module == ".models"));
+        assert!(
+            analysis
+                .imports
+                .iter()
+                .any(|item| item.module == "requests")
+        );
+        assert!(analysis.calls.iter().any(|call| call.target == "requests.get" && call.caller.as_deref() == Some("load")));
+        assert!(analysis.calls.iter().any(|call| call.target == "User"));
+    }
+
+    #[test]
+    fn extracts_typescript_imports_and_direct_calls() {
+        let analysis = parse(
+            "src/client.ts",
+            "import { request } from './http';\nimport type { User } from '../types';\nexport const load = () => request<User>('/users');\n",
+        );
+
+        assert!(analysis.imports.iter().any(|item| item.module == "./http"));
+        assert!(
+            analysis
+                .imports
+                .iter()
+                .any(|item| item.module == "../types")
+        );
+        assert!(
+            analysis
+                .calls
+                .iter()
+                .any(|call| call.target.contains("request"))
+        );
     }
 }

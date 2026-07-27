@@ -61,7 +61,11 @@ pub async fn open_project(
         .expect("scan registry lock poisoned")
         .remove(&scan_id);
     if let Ok(snapshot) = &result {
-        analysis.register_project(scan_id, PathBuf::from(&snapshot.root));
+        analysis.register_project(
+            scan_id,
+            PathBuf::from(&snapshot.root),
+            snapshot.entries.clone(),
+        );
     }
     result
 }

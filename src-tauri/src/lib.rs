@@ -1,6 +1,9 @@
 use serde::Serialize;
 
-use analysis::{cache::AnalysisState, commands::analyze_file};
+use analysis::{
+    cache::AnalysisState,
+    commands::{analyze_file, get_project_statistics},
+};
 use project::commands::{ScanRegistry, cancel_scan, open_project};
 
 mod analysis;
@@ -33,7 +36,8 @@ pub fn run() {
             application_info,
             open_project,
             cancel_scan,
-            analyze_file
+            analyze_file,
+            get_project_statistics
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

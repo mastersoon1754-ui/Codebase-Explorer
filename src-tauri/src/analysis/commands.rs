@@ -5,7 +5,9 @@ use tauri::State;
 use super::{
     cache::AnalysisState,
     parser::parse_file,
-    types::{AnalysisError, FileAnalysis},
+    relationships::resolve_imports,
+    statistics::calculate_statistics,
+    types::{AnalysisError, FileAnalysis, ProjectStatistics},
 };
 
 const MAX_SOURCE_BYTES: u64 = 5 * 1024 * 1024;
@@ -36,6 +38,26 @@ pub async fn analyze_file(
         state.files().insert(cache_key, analysis.clone());
     }
     Ok(analysis)
+}
+
+#[tauri::command]
+pub async fn get_project_statistics(
+    state: State<'_, AnalysisState>,
+    scan_id: String,
+) -> Result<ProjectStatistics, AnalysisError> {
+    let project = state.project(&scan_id).ok_or_else(|| {
+        AnalysisError::new("projectNotFound", "The project is no longer available")
+    })?;
+    tauri::async_runtime::spawn_blocking(move || {
+        calculate_statistics(&project.root, &project.entries)
+    })
+    .await
+    .map_err(|error| {
+        AnalysisError::new(
+            "analysisFailed",
+            format!("Project statistics stopped unexpectedly: {error}"),
+        )
+    })?
 }
 
 fn analyze_path(
@@ -89,7 +111,9 @@ fn analyze_path(
     }
     let source = String::from_utf8(bytes)
         .map_err(|_| AnalysisError::new("invalidEncoding", "Source file is not valid UTF-8"))?;
-    parse_file(&canonical, relative_path, source)
+    let mut analysis = parse_file(&canonical, relative_path, source)?;
+    resolve_imports(&root, relative_path, &mut analysis);
+    Ok(analysis)
 }
 
 #[cfg(test)]

@@ -53,7 +53,7 @@
 - [x] Implement parser adapters and a registry that is independent from the scan pipeline.
 - [x] Cache file fingerprints and analysis records for the active application session.
 - [x] Parse selected files off the UI thread and render source and symbol details.
-- [ ] Run all checks, commit with `feat: index project symbols with tree-sitter`, and push.
+- [x] Run all checks, commit with `feat: index project symbols with tree-sitter`, and push.
 
 ### Task 4: Statistics, Dependencies, and References
 
@@ -61,10 +61,10 @@
 
 **Produces:** LOC and file statistics, manifest dependencies, resolved import edges, symbol references, and statically identifiable call edges.
 
-- [ ] Test statistics, largest-file ordering, manifest parsing, import resolution, references, and direct calls.
-- [ ] Compute project statistics from cached scan and parse records.
-- [ ] Resolve relationships with source locations, relationship kinds, and confidence levels.
-- [ ] Populate inspector views with navigable data.
+- [x] Test statistics, largest-file ordering, manifest parsing, import resolution, and direct calls.
+- [x] Compute project statistics from cached scan and parse records.
+- [x] Resolve local and external imports and direct calls with source locations.
+- [x] Populate inspector views with statistics, dependencies, imports, and calls.
 - [ ] Run all checks, commit with `feat: map project dependencies and references`, and push.
 
 ### Task 5: Search and Interactive Graphs

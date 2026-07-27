@@ -1,3 +1,3 @@
 pub mod commands;
 mod scanner;
-mod types;
+pub(crate) mod types;
