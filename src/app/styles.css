@@ -1019,6 +1019,223 @@ kbd {
   color: var(--accent-strong);
 }
 
+.documentation-view {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  height: 100%;
+}
+
+.documentation-view > header {
+  padding: 26px 30px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.documentation-view h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 640;
+  letter-spacing: -0.035em;
+}
+
+.documentation-view > nav {
+  display: flex;
+  gap: 4px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-raised);
+}
+
+.documentation-view > nav button {
+  display: inline-flex;
+  height: 29px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 9px;
+  color: var(--text-faint);
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  font-size: 9px;
+}
+
+.documentation-view > nav button[data-active] {
+  color: var(--text);
+  background: var(--surface-muted);
+}
+
+.documentation-content {
+  min-height: 0;
+  overflow: auto;
+}
+
+.markdown-document {
+  width: min(820px, 100%);
+  margin: 0 auto;
+  padding: 42px clamp(26px, 6vw, 72px) 90px;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.markdown-document h1,
+.markdown-document h2,
+.markdown-document h3 {
+  color: var(--text);
+  letter-spacing: -0.025em;
+}
+
+.markdown-document h1 {
+  font-size: 30px;
+}
+.markdown-document h2 {
+  margin-top: 34px;
+  font-size: 18px;
+}
+
+.markdown-document code {
+  padding: 2px 4px;
+  border-radius: 3px;
+  background: var(--surface-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.markdown-document pre {
+  padding: 14px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-raised);
+}
+
+.markdown-document pre code {
+  padding: 0;
+  background: transparent;
+}
+
+.mermaid-diagram {
+  display: grid;
+  min-width: max-content;
+  min-height: 100%;
+  place-items: center;
+  padding: 44px;
+}
+
+.mermaid-diagram svg {
+  max-width: none;
+}
+
+.diagram-source {
+  margin: 24px;
+  padding: 16px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-raised);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  white-space: pre-wrap;
+}
+
+.documentation-empty {
+  display: grid;
+  min-height: 100%;
+  place-content: center;
+  color: var(--text-faint);
+  font-size: 11px;
+}
+
+.export-dialog {
+  width: min(500px, 100%);
+  padding: 18px;
+  border: 1px solid var(--border-strong);
+  border-radius: 9px;
+  background: var(--surface-raised);
+  box-shadow: 0 24px 80px rgb(0 0 0 / 38%);
+}
+
+.export-dialog > header,
+.export-dialog > footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.export-dialog > header h2 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: -0.03em;
+}
+
+.export-dialog > header > button {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  color: var(--text-faint);
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+}
+
+.export-formats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin: 24px 0;
+}
+
+.export-formats button {
+  display: grid;
+  min-height: 92px;
+  justify-items: start;
+  padding: 13px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  text-align: left;
+}
+
+.export-formats button[data-active] {
+  color: var(--text);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.export-formats strong {
+  margin-top: 12px;
+  font-size: 11px;
+}
+
+.export-formats small {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 8px;
+}
+
+.export-dialog > footer {
+  justify-content: flex-end;
+  gap: 7px;
+  margin-top: 22px;
+}
+
+.secondary-button {
+  height: 36px;
+  padding: 0 13px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  font-size: 11px;
+}
+
+.export-error {
+  color: #c87467;
+  font-size: 10px;
+}
+
 .eyebrow {
   margin-bottom: 16px;
   color: var(--accent-strong);

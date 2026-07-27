@@ -11,9 +11,13 @@ import { useProjectStore } from "../features/project/project-store";
 import { SearchPalette } from "../features/search/SearchPalette";
 import type { SearchResult } from "../features/search/types";
 import { lazy, Suspense, useEffect, useState } from "react";
+import { ExportDialog } from "../features/export/ExportDialog";
 import "./styles.css";
 
 const DependencyGraph = lazy(() => import("../features/graph/DependencyGraph"));
+const DocumentationView = lazy(
+  () => import("../features/documentation/DocumentationView"),
+);
 
 function Workspace() {
   const project = useProjectStore((state) => state.project);
@@ -24,8 +28,11 @@ function Workspace() {
   const isAnalyzing = useProjectStore((state) => state.isAnalyzing);
   const selectFile = useProjectStore((state) => state.selectFile);
   const selectSymbol = useProjectStore((state) => state.selectSymbol);
-  const [view, setView] = useState<"explorer" | "graph">("explorer");
+  const [view, setView] = useState<"explorer" | "graph" | "documentation">(
+    "explorer",
+  );
   const [searchOpen, setSearchOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;
@@ -67,7 +74,9 @@ function Workspace() {
   return (
     <div className="app-shell">
       <TopBar
+        canExport={Boolean(project)}
         canSearch={Boolean(project)}
+        onExport={() => setExportOpen(true)}
         onSearch={() => setSearchOpen(true)}
       />
       <div className="workspace">
@@ -93,6 +102,16 @@ function Workspace() {
                   void selectFile(path);
                 }}
               />
+            </Suspense>
+          ) : view === "documentation" && project ? (
+            <Suspense
+              fallback={
+                <div className="documentation-empty">
+                  Loading documentation view...
+                </div>
+              }
+            >
+              <DocumentationView scanId={project.scanId} />
             </Suspense>
           ) : selectedFile ? (
             <FileDetails analysis={selectedFile} />
@@ -121,6 +140,13 @@ function Workspace() {
         <SearchPalette
           onClose={() => setSearchOpen(false)}
           onSelect={openSearchResult}
+          scanId={project.scanId}
+        />
+      )}
+      {exportOpen && project && (
+        <ExportDialog
+          onClose={() => setExportOpen(false)}
+          projectName={project.name}
           scanId={project.scanId}
         />
       )}

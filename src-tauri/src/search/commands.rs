@@ -7,7 +7,7 @@ use super::{
     types::{DependencyGraph, SearchResult},
 };
 
-async fn ensure_index(
+pub(crate) async fn ensure_index(
     state: &State<'_, AnalysisState>,
     scan_id: &str,
 ) -> Result<super::types::ProjectIndex, AnalysisError> {

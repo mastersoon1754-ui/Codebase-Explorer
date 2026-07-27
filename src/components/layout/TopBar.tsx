@@ -4,9 +4,13 @@ import { ThemeToggle } from "../theme/ThemeToggle";
 export function TopBar({
   canSearch,
   onSearch,
+  canExport,
+  onExport,
 }: {
   canSearch: boolean;
   onSearch: () => void;
+  canExport: boolean;
+  onExport: () => void;
 }) {
   return (
     <header className="top-bar">
@@ -30,7 +34,8 @@ export function TopBar({
         <button
           aria-label="Export documentation"
           className="icon-button"
-          disabled
+          disabled={!canExport}
+          onClick={onExport}
           type="button"
         >
           <Download aria-hidden="true" size={17} />

@@ -1,5 +1,5 @@
 import {
-  Boxes,
+  BookOpen,
   Files,
   GitFork,
   Search,
@@ -10,14 +10,14 @@ import {
 type RailItem = {
   label: string;
   icon: LucideIcon;
-  id: "explorer" | "search" | "graph" | "symbols" | "settings";
+  id: "explorer" | "search" | "graph" | "documentation" | "settings";
 };
 
 const primaryItems: RailItem[] = [
   { id: "explorer", label: "Explorer", icon: Files },
   { id: "search", label: "Search", icon: Search },
   { id: "graph", label: "Dependencies", icon: GitFork },
-  { id: "symbols", label: "Symbols", icon: Boxes },
+  { id: "documentation", label: "Documentation", icon: BookOpen },
 ];
 
 function RailButton({
@@ -43,8 +43,8 @@ export function ActivityRail({
   activeView,
   onNavigate,
 }: {
-  activeView: "explorer" | "graph";
-  onNavigate: (view: "explorer" | "search" | "graph") => void;
+  activeView: "explorer" | "graph" | "documentation";
+  onNavigate: (view: "explorer" | "search" | "graph" | "documentation") => void;
 }) {
   return (
     <nav aria-label="Workspace views" className="activity-rail">
@@ -54,11 +54,7 @@ export function ActivityRail({
             active={item.id === activeView}
             key={item.label}
             onClick={() => {
-              if (
-                item.id === "explorer" ||
-                item.id === "search" ||
-                item.id === "graph"
-              ) {
+              if (item.id !== "settings") {
                 onNavigate(item.id);
               }
             }}

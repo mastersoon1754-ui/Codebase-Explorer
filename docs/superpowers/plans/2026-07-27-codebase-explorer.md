@@ -77,7 +77,7 @@
 - [x] Build a cached project-wide path, symbol, and dependency index.
 - [x] Add the keyboard-driven global search palette.
 - [x] Render an interactive dependency graph with focus, pan, zoom, and source navigation.
-- [ ] Run all checks, commit with `feat: add project search and interactive graphs`, and push.
+- [x] Run all checks, commit with `feat: add project search and interactive graphs`, and push.
 
 ### Task 6: Diagrams, Documentation, and Export
 
@@ -85,10 +85,10 @@
 
 **Produces:** Linked project documentation, escaped Mermaid definitions, and Markdown, self-contained HTML, and PDF exports.
 
-- [ ] Test stable documentation output, Mermaid escaping, HTML assets, and PDF pages.
-- [ ] Generate overview, folder, file, and symbol documentation from indexed data.
-- [ ] Render folder, class, and dependency diagrams with source fallback.
-- [ ] Export through a native destination picker without requiring network access.
+- [x] Test stable documentation output, Mermaid escaping, self-contained HTML, and PDF pages.
+- [x] Generate an overview, symbols, statistics, and diagrams from indexed data.
+- [x] Render folder, class, and dependency diagrams with source fallback.
+- [x] Export through a native destination picker without requiring network access.
 - [ ] Run all checks, commit with `feat: generate and export project documentation`, and push.
 
 ### Task 7: Optional AI Provider Layer

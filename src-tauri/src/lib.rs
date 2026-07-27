@@ -4,10 +4,12 @@ use analysis::{
     cache::AnalysisState,
     commands::{analyze_file, get_project_statistics},
 };
+use documentation::commands::{export_documentation, generate_documentation};
 use project::commands::{ScanRegistry, cancel_scan, open_project};
 use search::commands::{get_dependency_graph, search_project};
 
 mod analysis;
+mod documentation;
 mod languages;
 mod project;
 mod search;
@@ -41,7 +43,9 @@ pub fn run() {
             analyze_file,
             get_project_statistics,
             search_project,
-            get_dependency_graph
+            get_dependency_graph,
+            generate_documentation,
+            export_documentation
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
