@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { cancelProjectScan, chooseProjectFolder, scanProject } from "./api";
+import { analyzeSourceFile } from "../symbols/api";
+import type { FileAnalysis, SymbolInfo } from "../symbols/types";
 import type { ProjectSnapshot, ScanError, ScanProgress } from "./types";
 
 type ProjectState = {
@@ -7,9 +9,14 @@ type ProjectState = {
   progress: ScanProgress | null;
   error: string | null;
   isScanning: boolean;
+  selectedFile: FileAnalysis | null;
+  isAnalyzing: boolean;
+  selectedSymbol: SymbolInfo | null;
   openProject: () => Promise<void>;
   cancelScan: () => Promise<void>;
   updateProgress: (progress: ScanProgress) => void;
+  selectFile: (path: string) => Promise<void>;
+  selectSymbol: (symbol: SymbolInfo | null) => void;
 };
 
 function errorMessage(error: unknown) {
@@ -28,6 +35,9 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   progress: null,
   error: null,
   isScanning: false,
+  selectedFile: null,
+  isAnalyzing: false,
+  selectedSymbol: null,
 
   async openProject() {
     const path = await chooseProjectFolder();
@@ -42,7 +52,13 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
     try {
       const project = await scanProject(path, scanId);
-      set({ project, isScanning: false, progress: null });
+      set({
+        project,
+        selectedFile: null,
+        selectedSymbol: null,
+        isScanning: false,
+        progress: null,
+      });
     } catch (error) {
       const cancelled =
         typeof error === "object" &&
@@ -66,5 +82,26 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     if (get().progress?.scanId === progress.scanId) {
       set({ progress });
     }
+  },
+
+  async selectFile(path) {
+    const project = get().project;
+    if (!project) return;
+    set({
+      selectedFile: null,
+      selectedSymbol: null,
+      isAnalyzing: true,
+      error: null,
+    });
+    try {
+      const selectedFile = await analyzeSourceFile(project.scanId, path);
+      set({ selectedFile, isAnalyzing: false });
+    } catch (error) {
+      set({ error: errorMessage(error), isAnalyzing: false });
+    }
+  },
+
+  selectSymbol(selectedSymbol) {
+    set({ selectedSymbol });
   },
 }));

@@ -2,6 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-dialog";
 import type { ProjectSnapshot, ScanProgress } from "./types";
+export { analyzeSourceFile } from "../symbols/api";
 
 export async function chooseProjectFolder() {
   const selected = await open({

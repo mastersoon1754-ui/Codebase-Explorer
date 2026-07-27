@@ -10,6 +10,8 @@ use super::{
 };
 use tauri::{AppHandle, Emitter, State};
 
+use crate::analysis::cache::AnalysisState;
+
 #[derive(Default)]
 pub struct ScanRegistry(Mutex<HashMap<String, Arc<AtomicBool>>>);
 
@@ -17,6 +19,7 @@ pub struct ScanRegistry(Mutex<HashMap<String, Arc<AtomicBool>>>);
 pub async fn open_project(
     app: AppHandle,
     registry: State<'_, ScanRegistry>,
+    analysis: State<'_, AnalysisState>,
     path: PathBuf,
     scan_id: String,
 ) -> Result<ProjectSnapshot, ScanError> {
@@ -57,6 +60,9 @@ pub async fn open_project(
         .lock()
         .expect("scan registry lock poisoned")
         .remove(&scan_id);
+    if let Ok(snapshot) = &result {
+        analysis.register_project(scan_id, PathBuf::from(&snapshot.root));
+    }
     result
 }
 

@@ -2,7 +2,7 @@
 
 Codebase Explorer is a local-first desktop application for understanding unfamiliar codebases. It is designed to index project structure, symbols, dependencies, and references, then turn that analysis into searchable documentation and diagrams.
 
-The application is in active development. The current milestone can open and scan local projects, detect common languages, and display large file trees through a virtualized explorer. Source parsing and symbol indexing are the next milestone.
+The application is in active development. It can open and scan local projects, display large file trees, and parse Python, JavaScript, TypeScript, and TSX source files with Tree-sitter. Selecting a supported file reveals its source, symbols, signatures, locations, and available documentation.
 
 ## Principles
 

@@ -9,6 +9,7 @@ export function ExplorerPanel() {
   const error = useProjectStore((state) => state.error);
   const openProject = useProjectStore((state) => state.openProject);
   const cancelScan = useProjectStore((state) => state.cancelScan);
+  const selectFile = useProjectStore((state) => state.selectFile);
 
   return (
     <aside className="side-panel explorer-panel">
@@ -42,7 +43,7 @@ export function ExplorerPanel() {
           <span className="scan-progress__path">{progress?.currentPath}</span>
         </div>
       ) : project ? (
-        <FileTree entries={project.entries} />
+        <FileTree entries={project.entries} onSelectFile={selectFile} />
       ) : (
         <div className="empty-tree">
           <div className="empty-tree__mark">

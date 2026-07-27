@@ -1,7 +1,10 @@
 use serde::Serialize;
 
+use analysis::{cache::AnalysisState, commands::analyze_file};
 use project::commands::{ScanRegistry, cancel_scan, open_project};
 
+mod analysis;
+mod languages;
 mod project;
 
 #[derive(Serialize)]
@@ -25,10 +28,12 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .manage(ScanRegistry::default())
+        .manage(AnalysisState::default())
         .invoke_handler(tauri::generate_handler![
             application_info,
             open_project,
-            cancel_scan
+            cancel_scan,
+            analyze_file
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

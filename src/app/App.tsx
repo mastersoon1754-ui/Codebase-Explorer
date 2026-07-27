@@ -5,6 +5,7 @@ import { TopBar } from "../components/layout/TopBar";
 import { WelcomeView } from "../components/layout/WelcomeView";
 import { ThemeProvider } from "../components/theme/ThemeProvider";
 import { ProjectOverview } from "../features/project/ProjectOverview";
+import { FileDetails } from "../features/symbols/FileDetails";
 import { onScanProgress } from "../features/project/api";
 import { useProjectStore } from "../features/project/project-store";
 import "./styles.css";
@@ -14,6 +15,8 @@ function Workspace() {
   const isScanning = useProjectStore((state) => state.isScanning);
   const progress = useProjectStore((state) => state.progress);
   const updateProgress = useProjectStore((state) => state.updateProgress);
+  const selectedFile = useProjectStore((state) => state.selectedFile);
+  const isAnalyzing = useProjectStore((state) => state.isAnalyzing);
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;
@@ -30,7 +33,13 @@ function Workspace() {
         <ActivityRail />
         <ExplorerPanel />
         <main className="content">
-          {project ? <ProjectOverview project={project} /> : <WelcomeView />}
+          {selectedFile ? (
+            <FileDetails analysis={selectedFile} />
+          ) : project ? (
+            <ProjectOverview project={project} />
+          ) : (
+            <WelcomeView />
+          )}
         </main>
         <InspectorPanel />
       </div>
@@ -43,7 +52,9 @@ function Workspace() {
               ? project.root
               : "No project open"}
         </span>
-        <span>{isScanning ? "Indexing" : "Ready"}</span>
+        <span>
+          {isScanning ? "Indexing" : isAnalyzing ? "Parsing" : "Ready"}
+        </span>
       </footer>
     </div>
   );

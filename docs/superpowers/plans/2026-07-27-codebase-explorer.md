@@ -41,7 +41,7 @@
 - [x] Implement a cancellable filesystem walk with stable relative paths and bounded progress events.
 - [x] Add the native folder picker and typed frontend command adapter.
 - [x] Render the tree with virtualization and keyboard navigation.
-- [ ] Run all checks, commit with `feat: add incremental project discovery`, and push.
+- [x] Run all checks, commit with `feat: add incremental project discovery`, and push.
 
 ### Task 3: Parsing and Symbol Index
 
@@ -49,10 +49,10 @@
 
 **Produces:** `LanguageParser` trait, tree-sitter adapters, content-hash cache, symbol records, signatures, documentation, and source ranges.
 
-- [ ] Test Python, JavaScript, TypeScript, and TSX fixtures for every supported symbol kind.
-- [ ] Implement parser adapters and a registry that is independent from the scan pipeline.
-- [ ] Persist file fingerprints and analysis records, deleting stale entries on rescan.
-- [ ] Stream analysis progress and render file and symbol details.
+- [x] Test Python, JavaScript, TypeScript, and TSX fixtures for every supported symbol kind.
+- [x] Implement parser adapters and a registry that is independent from the scan pipeline.
+- [x] Cache file fingerprints and analysis records for the active application session.
+- [x] Parse selected files off the UI thread and render source and symbol details.
 - [ ] Run all checks, commit with `feat: index project symbols with tree-sitter`, and push.
 
 ### Task 4: Statistics, Dependencies, and References

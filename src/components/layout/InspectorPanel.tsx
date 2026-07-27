@@ -1,4 +1,7 @@
 import { BarChart3, Braces, GitFork } from "lucide-react";
+import { SymbolOutline } from "../../features/symbols/SymbolOutline";
+import { SymbolDetails } from "../../features/symbols/SymbolDetails";
+import { useProjectStore } from "../../features/project/project-store";
 
 const sections = [
   { label: "Overview", icon: BarChart3 },
@@ -7,6 +10,9 @@ const sections = [
 ];
 
 export function InspectorPanel() {
+  const analysis = useProjectStore((state) => state.selectedFile);
+  const selectedSymbol = useProjectStore((state) => state.selectedSymbol);
+  const selectSymbol = useProjectStore((state) => state.selectSymbol);
   return (
     <aside className="side-panel inspector-panel">
       <div className="panel-heading">
@@ -31,15 +37,28 @@ export function InspectorPanel() {
           </button>
         ))}
       </div>
-      <div className="empty-inspector">
-        <div className="metric-placeholder">
-          <span />
-          <span />
-          <span />
-          <span />
+      {selectedSymbol ? (
+        <SymbolDetails
+          symbol={selectedSymbol}
+          onBack={() => selectSymbol(null)}
+        />
+      ) : analysis ? (
+        <SymbolOutline
+          symbols={analysis.symbols}
+          selectedId={null}
+          onSelect={selectSymbol}
+        />
+      ) : (
+        <div className="empty-inspector">
+          <div className="metric-placeholder">
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+          <p>Select a file or symbol to inspect its details.</p>
         </div>
-        <p>Select a file or symbol to inspect its details.</p>
-      </div>
+      )}
     </aside>
   );
 }

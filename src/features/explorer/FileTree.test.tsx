@@ -46,7 +46,7 @@ const entries: ProjectEntry[] = [
 
 describe("FileTree", () => {
   it("expands directories to reveal their children", () => {
-    render(<FileTree entries={entries} />);
+    render(<FileTree entries={entries} onSelectFile={vi.fn()} />);
 
     expect(screen.queryByText("main.ts")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("treeitem", { name: /src/i }));
@@ -55,7 +55,7 @@ describe("FileTree", () => {
   });
 
   it("supports keyboard expansion", () => {
-    render(<FileTree entries={entries} />);
+    render(<FileTree entries={entries} onSelectFile={vi.fn()} />);
     const tree = screen.getByRole("tree", { name: "Project files" });
 
     fireEvent.keyDown(tree, { key: "ArrowRight" });
@@ -65,5 +65,24 @@ describe("FileTree", () => {
       "aria-expanded",
       "true",
     );
+  });
+
+  it("selects supported source files without toggling the tree", () => {
+    const onSelectFile = vi.fn();
+    render(<FileTree entries={entries} onSelectFile={onSelectFile} />);
+    fireEvent.click(screen.getByRole("treeitem", { name: /src/i }));
+
+    fireEvent.click(screen.getByRole("treeitem", { name: /main.ts/i }));
+
+    expect(onSelectFile).toHaveBeenCalledWith("src/main.ts");
+  });
+
+  it("keeps unsupported text files in the tree without parsing them", () => {
+    const onSelectFile = vi.fn();
+    render(<FileTree entries={entries} onSelectFile={onSelectFile} />);
+
+    fireEvent.click(screen.getByRole("treeitem", { name: /README.md/i }));
+
+    expect(onSelectFile).not.toHaveBeenCalled();
   });
 });

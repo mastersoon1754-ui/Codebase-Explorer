@@ -15,6 +15,10 @@ type TreeRow = {
   depth: number;
 };
 
+function canAnalyze(entry: ProjectEntry) {
+  return ["python", "javascript", "typescript"].includes(entry.language ?? "");
+}
+
 function buildVisibleRows(entries: ProjectEntry[], expanded: Set<string>) {
   const children = new Map<string | null, ProjectEntry[]>();
   for (const entry of entries) {
@@ -55,7 +59,13 @@ function EntryIcon({
   return entry.language ? <FileCode2 size={14} /> : <FileText size={14} />;
 }
 
-export function FileTree({ entries }: { entries: ProjectEntry[] }) {
+export function FileTree({
+  entries,
+  onSelectFile,
+}: {
+  entries: ProjectEntry[];
+  onSelectFile: (path: string) => void;
+}) {
   const parentRef = useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [activeIndex, setActiveIndex] = useState(0);
@@ -100,6 +110,9 @@ export function FileTree({ entries }: { entries: ProjectEntry[] }) {
     } else if (event.key === "Enter" && row.entry.kind === "directory") {
       event.preventDefault();
       toggle(row.entry.path);
+    } else if (event.key === "Enter" && canAnalyze(row.entry)) {
+      event.preventDefault();
+      onSelectFile(row.entry.path);
     } else {
       return;
     }
@@ -134,6 +147,7 @@ export function FileTree({ entries }: { entries: ProjectEntry[] }) {
               onClick={() => {
                 setActiveIndex(virtualRow.index);
                 if (row.entry.kind === "directory") toggle(row.entry.path);
+                else if (canAnalyze(row.entry)) onSelectFile(row.entry.path);
               }}
               role="treeitem"
               style={{
@@ -141,7 +155,11 @@ export function FileTree({ entries }: { entries: ProjectEntry[] }) {
                 transform: `translateY(${virtualRow.start}px)`,
               }}
               tabIndex={-1}
-              title={row.entry.path}
+              title={
+                row.entry.kind === "file" && !canAnalyze(row.entry)
+                  ? `${row.entry.path} (preview unavailable)`
+                  : row.entry.path
+              }
               type="button"
             >
               <span className="tree-row__chevron">
