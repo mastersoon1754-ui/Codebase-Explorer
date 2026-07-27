@@ -3,9 +3,17 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
 
+vi.mock("../features/project/api", () => ({
+  onScanProgress: vi.fn().mockResolvedValue(() => undefined),
+  chooseProjectFolder: vi.fn().mockResolvedValue(null),
+  scanProject: vi.fn(),
+  cancelProjectScan: vi.fn(),
+}));
+
 describe("App", () => {
   beforeEach(() => {
     localStorage.clear();
+    vi.clearAllMocks();
     document.documentElement.removeAttribute("data-theme");
     Object.defineProperty(window, "matchMedia", {
       configurable: true,
@@ -24,7 +32,7 @@ describe("App", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /open project folder/i }),
-    ).toBeDisabled();
+    ).toBeEnabled();
   });
 
   it("persists a theme change", async () => {

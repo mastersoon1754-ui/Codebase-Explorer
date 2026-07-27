@@ -29,7 +29,7 @@
 - [x] Replace template content with the desktop workspace shell.
 - [x] Test theme persistence and the empty-project state.
 - [x] Run frontend tests, lint, build, format checks, Rust tests, fmt, and Clippy.
-- [ ] Commit with `feat: establish desktop application foundation` and push to `main`.
+- [x] Commit with `feat: establish desktop application foundation` and push to `main`.
 
 ### Task 2: Project Discovery and File Tree
 
@@ -37,10 +37,10 @@
 
 **Produces:** `open_project`, `cancel_scan`, `ProjectSnapshot`, progress events, language totals, and a virtualized tree.
 
-- [ ] Write scanner tests for exclusions, binary files, symlinks, language detection, cancellation, and errors.
-- [ ] Implement a cancellable filesystem walk with stable relative paths and bounded progress events.
-- [ ] Add the native folder picker and typed frontend command adapter.
-- [ ] Render the tree with virtualization, keyboard navigation, and persistent expansion state.
+- [x] Write scanner tests for exclusions, binary files, symlinks, language detection, cancellation, and errors.
+- [x] Implement a cancellable filesystem walk with stable relative paths and bounded progress events.
+- [x] Add the native folder picker and typed frontend command adapter.
+- [x] Render the tree with virtualization and keyboard navigation.
 - [ ] Run all checks, commit with `feat: add incremental project discovery`, and push.
 
 ### Task 3: Parsing and Symbol Index

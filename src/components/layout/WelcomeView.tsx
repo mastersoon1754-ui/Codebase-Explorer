@@ -5,6 +5,7 @@ import {
   GitBranch,
   ScanSearch,
 } from "lucide-react";
+import { useProjectStore } from "../../features/project/project-store";
 
 const features = [
   {
@@ -25,6 +26,9 @@ const features = [
 ];
 
 export function WelcomeView() {
+  const openProject = useProjectStore((state) => state.openProject);
+  const isScanning = useProjectStore((state) => state.isScanning);
+
   return (
     <section className="welcome">
       <div className="welcome__content">
@@ -35,12 +39,17 @@ export function WelcomeView() {
           dependencies. Analysis stays on your machine.
         </p>
         <div className="welcome__actions">
-          <button className="primary-button" disabled type="button">
+          <button
+            className="primary-button"
+            disabled={isScanning}
+            onClick={openProject}
+            type="button"
+          >
             <FolderOpen aria-hidden="true" size={17} />
-            Open project folder
+            {isScanning ? "Scanning project" : "Open project folder"}
           </button>
           <span className="coming-soon">
-            Folder scanning arrives in the next milestone
+            Python, JavaScript, and TypeScript
           </span>
         </div>
         <div className="feature-grid">
