@@ -1,5 +1,9 @@
 use serde::Serialize;
 
+use ai::{
+    commands::{clear_ai_key, get_ai_settings, run_ai_action, save_ai_settings},
+    settings::{AISettingsState, KeyringSecretStore},
+};
 use analysis::{
     cache::AnalysisState,
     commands::{analyze_file, get_project_statistics},
@@ -7,7 +11,9 @@ use analysis::{
 use documentation::commands::{export_documentation, generate_documentation};
 use project::commands::{ScanRegistry, cancel_scan, open_project};
 use search::commands::{get_dependency_graph, search_project};
+use tauri::Manager;
 
+mod ai;
 mod analysis;
 mod documentation;
 mod languages;
@@ -36,6 +42,14 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .manage(ScanRegistry::default())
         .manage(AnalysisState::default())
+        .setup(|app| {
+            let settings_path = app.path().app_config_dir()?.join("ai-settings.json");
+            app.manage(AISettingsState::load(
+                settings_path,
+                Box::new(KeyringSecretStore),
+            ));
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             application_info,
             open_project,
@@ -45,7 +59,11 @@ pub fn run() {
             search_project,
             get_dependency_graph,
             generate_documentation,
-            export_documentation
+            export_documentation,
+            get_ai_settings,
+            save_ai_settings,
+            clear_ai_key,
+            run_ai_action
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -1,7 +1,14 @@
 import { AlertTriangle, Braces, FileCode2 } from "lucide-react";
 import type { FileAnalysis } from "./types";
+import { AIActions } from "../ai/AIActions";
 
-export function FileDetails({ analysis }: { analysis: FileAnalysis }) {
+export function FileDetails({
+  analysis,
+  scanId,
+}: {
+  analysis: FileAnalysis;
+  scanId: string;
+}) {
   const pathParts = analysis.path.split("/");
   return (
     <section className="file-details">
@@ -24,6 +31,7 @@ export function FileDetails({ analysis }: { analysis: FileAnalysis }) {
             </span>
           )}
         </div>
+        <AIActions path={analysis.path} scanId={scanId} />
       </header>
       <div className="source-view" aria-label="Source code">
         <pre>

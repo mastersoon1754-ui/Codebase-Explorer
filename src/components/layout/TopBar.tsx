@@ -6,11 +6,13 @@ export function TopBar({
   onSearch,
   canExport,
   onExport,
+  onSettings,
 }: {
   canSearch: boolean;
   onSearch: () => void;
   canExport: boolean;
   onExport: () => void;
+  onSettings: () => void;
 }) {
   return (
     <header className="top-bar">
@@ -44,6 +46,7 @@ export function TopBar({
         <button
           aria-label="Application settings"
           className="icon-button"
+          onClick={onSettings}
           type="button"
         >
           <SlidersHorizontal aria-hidden="true" size={17} />

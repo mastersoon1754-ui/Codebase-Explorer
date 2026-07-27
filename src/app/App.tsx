@@ -12,11 +12,18 @@ import { SearchPalette } from "../features/search/SearchPalette";
 import type { SearchResult } from "../features/search/types";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { ExportDialog } from "../features/export/ExportDialog";
+import { AISettingsDialog } from "../features/settings/AISettingsDialog";
+import { useAIStore } from "../features/ai/ai-store";
 import "./styles.css";
 
 const DependencyGraph = lazy(() => import("../features/graph/DependencyGraph"));
 const DocumentationView = lazy(
   () => import("../features/documentation/DocumentationView"),
+);
+const AIResponsePanel = lazy(() =>
+  import("../features/ai/AIResponsePanel").then((module) => ({
+    default: module.AIResponsePanel,
+  })),
 );
 
 function Workspace() {
@@ -33,6 +40,11 @@ function Workspace() {
   );
   const [searchOpen, setSearchOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const loadAISettings = useAIStore((state) => state.loadSettings);
+  const aiActive = useAIStore((state) =>
+    Boolean(state.response || state.error || state.loading),
+  );
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;
@@ -41,6 +53,10 @@ function Workspace() {
     });
     return () => unlisten?.();
   }, [updateProgress]);
+
+  useEffect(() => {
+    void loadAISettings();
+  }, [loadAISettings]);
 
   useEffect(() => {
     function handleShortcut(event: globalThis.KeyboardEvent) {
@@ -78,6 +94,7 @@ function Workspace() {
         canSearch={Boolean(project)}
         onExport={() => setExportOpen(true)}
         onSearch={() => setSearchOpen(true)}
+        onSettings={() => setSettingsOpen(true)}
       />
       <div className="workspace">
         <ActivityRail
@@ -114,7 +131,10 @@ function Workspace() {
               <DocumentationView scanId={project.scanId} />
             </Suspense>
           ) : selectedFile ? (
-            <FileDetails analysis={selectedFile} />
+            <FileDetails
+              analysis={selectedFile}
+              scanId={project?.scanId ?? ""}
+            />
           ) : project ? (
             <ProjectOverview project={project} />
           ) : (
@@ -149,6 +169,14 @@ function Workspace() {
           projectName={project.name}
           scanId={project.scanId}
         />
+      )}
+      {settingsOpen && (
+        <AISettingsDialog onClose={() => setSettingsOpen(false)} />
+      )}
+      {aiActive && (
+        <Suspense fallback={null}>
+          <AIResponsePanel />
+        </Suspense>
       )}
     </div>
   );

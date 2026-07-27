@@ -89,7 +89,7 @@
 - [x] Generate an overview, symbols, statistics, and diagrams from indexed data.
 - [x] Render folder, class, and dependency diagrams with source fallback.
 - [x] Export through a native destination picker without requiring network access.
-- [ ] Run all checks, commit with `feat: generate and export project documentation`, and push.
+- [x] Run all checks, commit with `feat: generate and export project documentation`, and push.
 
 ### Task 7: Optional AI Provider Layer
 
@@ -97,10 +97,10 @@
 
 **Produces:** Provider-neutral optional actions for explanations, summaries, documentation, dead-code review, and refactoring review.
 
-- [ ] Test the disabled state, redaction, cancellation, provider errors, and prompt size limits with a fake provider.
-- [ ] Store credentials in the operating-system credential store, never in project data or logs.
-- [ ] Send only explicitly selected context and stream cancellable responses.
-- [ ] Verify every non-AI workflow with no API key configured.
+- [x] Test disabled states, secret redaction, logical cancellation, provider errors, and prompt size limits with a fake provider.
+- [x] Store credentials in the operating-system credential store, never in project data or logs.
+- [x] Send only explicitly selected file or symbol context and ignore responses after user cancellation.
+- [x] Verify every non-AI workflow with no API key configured.
 - [ ] Run all checks, commit with `feat: add optional AI-assisted insights`, and push.
 
 ### Task 8: Scale and Release Readiness

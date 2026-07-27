@@ -4,6 +4,8 @@ Codebase Explorer is a local-first desktop application for understanding unfamil
 
 The application is in active development. It can open and scan local projects, search paths and symbols, display interactive dependency and Mermaid diagrams, and parse Python, JavaScript, TypeScript, and TSX source files with Tree-sitter. Generated project documentation can be exported as Markdown, self-contained HTML, or PDF.
 
+An optional OpenAI-compatible provider can explain selected files and symbols or review selected source for refactoring and potentially dead code. Core analysis remains local and fully functional without provider configuration.
+
 ## Principles
 
 - Local analysis by default
